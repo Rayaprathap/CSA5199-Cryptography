@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+
+// Initial permutation (IP) table
+static const int initial_permutation[] = {
+    58, 50, 42, 34, 26, 18, 10, 2,
+    60, 52, 44, 36, 28, 20, 12, 4,
+    62, 54, 46, 38, 30, 22, 14, 6,
+    64, 56, 48, 40, 32, 24, 16, 8,
+    57, 49, 41, 33, 25, 17, 9, 1,
+    59, 51, 43, 35, 27, 19, 11, 3,
+    61, 53, 45, 37, 29, 21, 13, 5,
+    63, 55, 47, 39, 31, 23, 15, 7
+};
+
+// DES key schedule generation
+static void generate_subkeys(uint64_t key, uint64_t subkeys[16]) {
+    // Implement key schedule generation (PC1, left/right shifts, PC2)
+    // ...
+}
+
+// DES round function (expansion, substitution, permutation)
+static uint64_t des_round(uint64_t block, uint64_t subkey) {
+    // Implement DES round operations (expansion, substitution, permutation)
+    // ...
+}
+
+// DES initial permutation (IP)
+static uint64_t initial_permute(uint64_t data) {
+    // Implement initial permutation
+    // ...
+}
+
+// XOR two 64-bit blocks
+static uint64_t xor_blocks(uint64_t a, uint64_t b) {
+    return a ^ b;
+}
+
+// CBC mode encryption using DES
+static uint64_t des_cbc_encrypt(uint64_t plaintext, uint64_t iv, uint64_t key) {
+    uint64_t subkeys[16];
+    generate_subkeys(key, subkeys);
+
+    uint64_t ciphertext = 0;
+    uint64_t previous_block = iv;
+
+    plaintext = initial_permute(plaintext);
+
+    for (int round = 0; round < 16; round++) {
+        uint64_t input_block = xor_blocks(plaintext, previous_block);
+        uint64_t round_output = des_round(input_block, subkeys[round]);
+        previous_block = round_output;
+    }
+
+    // Swap the left and right halves
+    ciphertext = ((previous_block & 0x00000000FFFFFFFF) << 32) | ((previous_block & 0xFFFFFFFF00000000) >> 32);
+
+    // Perform the final permutation (inverse of the initial permutation)
+    // ...
+
+    return ciphertext;
+}
+
+int main() {
+    uint64_t key = 0x133457799BBCDFF1; // 64-bit DES key
+    uint64_t iv = 0x0123456789ABCDEF;  // 64-bit initialization vector
+    uint64_t plaintext = 0x0123456789ABCDEF; // 64-bit plaintext
+
+    uint64_t ciphertext = des_cbc_encrypt(plaintext, iv, key);
+
+    printf("Plaintext: 0x%016lX\n", plaintext);
+    printf("Ciphertext: 0x%016lX\n", ciphertext);
+
+    return 0;
+}
+  
